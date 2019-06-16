@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 export default function Flights(props) {
   const {
@@ -6,13 +7,13 @@ export default function Flights(props) {
     term,
     time,
     airportTo,
-    status,
+    statusCode,
     actual,
-    gate,
+    gateNo,
+    displayGate,
   } = props;
 
-  const colorTerm = term === 'A' ? 'termA' : 'termB';
-  const gateTd = gate || '-';
+  const colorTerm = term === 'A' ? 'termAIcon' : 'termBIcon';
   const flights = flight.map(flightItem => (
     <div key={flightItem.airline.en.id}>
       {flightItem.airline.en.name}
@@ -28,7 +29,7 @@ export default function Flights(props) {
 
   const getStatus = () => {
     let statusFlight;
-    switch (status) {
+    switch (statusCode) {
       case 'ON':
         statusFlight = 'On time';
         break;
@@ -48,7 +49,7 @@ export default function Flights(props) {
         statusFlight = 'Boarding';
         break;
       default:
-        statusFlight = status;
+        statusFlight = statusCode;
     }
 
     if (
@@ -61,15 +62,38 @@ export default function Flights(props) {
 
     return statusFlight;
   };
+
   return (
     <tr>
       <td><span className={colorTerm}>{term}</span></td>
+      {displayGate ? <td>{gateNo || '-'}</td> : null}
       <td>{flightTime}</td>
       <td>{airportTo}</td>
       <td>{getStatus()}</td>
       <td>{flights}</td>
       <td>{airlines}</td>
-      <td>{gateTd}</td>
     </tr>
   );
 }
+
+Flights.propTypes = {
+  flight: PropTypes.arrayOf(PropTypes.object),
+  term: PropTypes.string,
+  time: PropTypes.objectOf(PropTypes.string),
+  airportTo: PropTypes.string,
+  statusCode: PropTypes.string,
+  actual: PropTypes.objectOf(PropTypes.string),
+  gateNo: PropTypes.string,
+  displayGate: PropTypes.bool,
+};
+
+Flights.defaultProps = {
+  flight: [],
+  term: '',
+  time: {},
+  airportTo: '',
+  statusCode: '',
+  actual: {},
+  gateNo: '',
+  displayGate: false,
+};
